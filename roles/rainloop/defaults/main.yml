@@ -1,0 +1,6 @@
+---
+
+# determines the port that rainloop (webmail client) will run on
+rainloop_port: 8085
+
+rainloop_dir: "/var/www/rainloop"

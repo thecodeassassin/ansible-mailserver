@@ -1,0 +1,30 @@
+server {
+    server_name rainloop;
+    listen {{ rainloop_port }};
+    root /var/www/rainloop/public_html;
+    access_log /var/www/rainloop/logs/access.log;
+    error_log /var/www/rainloop/logs/error.log;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_index index.php;
+        fastcgi_split_path_info ^(.+\.php)(.*)$;
+        fastcgi_keep_conn on;
+        include /etc/nginx/fastcgi_params;
+          fastcgi_pass    127.0.0.1:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    location ^~ /data {
+      deny all;
+    }
+
+}

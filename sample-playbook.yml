@@ -1,0 +1,12 @@
+---
+- hosts: all
+  sudo: yes
+
+  vars:
+    rainloop_port: 8085
+
+  roles:
+    - { role: franklinkim.postfix  }
+    - { role: rainloop }
+    - { role: geerlingguy.nginx  }
+    - { role: nbz4live.php-fpm  }

@@ -1,0 +1,31 @@
+---
+
+- name: Installing php5-cli
+  apt: name=php5-cli state=present update_cache=yes
+
+- name: Installing php5-curl
+  apt: name=php5-curl state=present
+
+- name: Installing php5-sqlite
+  apt: name=php5-sqlite state=present
+
+- name: Configure web root
+  file: path={{ rainloop_dir }}/public_html state=directory recurse=yes owner=www-data group=www-data mode=0755
+
+- name: Configure logs dir
+  file: path={{ rainloop_dir }}/logs state=directory recurse=yes owner=www-data group=www-data mode=0755
+
+- name: Downloading rainloop
+  get_url: url=http://repository.rainloop.net/v2/webmail/rainloop-latest.zip dest=/tmp/rainloop.zip
+
+- name: Unpacking archive
+  unarchive: src=/tmp/rainloop.zip dest={{ rainloop_dir }}/public_html copy=no
+
+- name: Ensure directories are 0755
+  command: find {{ rainloop_dir }}/public_html -type d -exec chmod 0755 {} \;
+
+- name: Ensure files are 0644
+  command: find {{ rainloop_dir }}/public_html -type f -exec chmod 0644 {} \;
+
+- name: Setting proper owner of web root
+  file: path={{ rainloop_dir }}/public_html state=directory recurse=yes owner=www-data group=www-data

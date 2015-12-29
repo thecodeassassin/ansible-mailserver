@@ -1,0 +1,35 @@
+# default php-fpm pool required for rainloop
+php_fpm_pools:
+  - name: rainloop
+    user: www-data
+    group: www-data
+    listen: 9000
+    chdir: /
+
+nginx_vhosts:
+  - listen: "{{ rainloop_port }}"
+    server_name: "rainloop"
+    root: "/var/www/rainloop/public_html"
+    index: "index.php"
+    access_log: "{{ rainloop_dir }}/logs/access.log"
+    error_log: "{{ rainloop_dir }}/logs/error.log"
+    extra_parameters: |
+      location / {
+          try_files $uri $uri/ /index.php?$query_string;
+      }
+
+      location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass    127.0.0.1:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include /etc/nginx/fastcgi_params;
+      }
+
+      location ~ /\.ht {
+          deny all;
+      }
+
+      location ^~ /data {
+        deny all;
+      }
